@@ -1,0 +1,6 @@
+module COpenCL {
+    umbrella header "COpenCL.h"
+    module * { export * }
+    export *
+}
+
