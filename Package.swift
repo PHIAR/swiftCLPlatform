@@ -37,6 +37,9 @@ let package = Package(
                      package: "swiftMetalPlatform"),
         ],
                 path: "Sources/swiftCL",
+                exclude: [
+            "OpenCL.map",
+        ],
                 linkerSettings: [
             .unsafeFlags([ "-Xlinker", "--version-script=Sources/swiftCL/OpenCL.map" ])
         ]),
