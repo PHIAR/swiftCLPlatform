@@ -1,5 +1,5 @@
+import COpenCL
 import Foundation
-import OpenCL
 import XCTest
 
 private let DATA_SIZE = 1024

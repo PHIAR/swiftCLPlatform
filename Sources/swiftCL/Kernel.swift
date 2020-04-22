@@ -24,10 +24,10 @@ public final class Kernel: MetalKernel {
                       computePipelineState: self.computePipelineState)
     }
 
-    public func getKernelWorkGroupInfo(paramName: cl_kernel_work_group_info ,
-                                       paramValueSize: size_t,
-                                       paramValue: UnsafeMutableRawPointer,
-                                       paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
+    internal func getKernelWorkGroupInfo(paramName: cl_kernel_work_group_info ,
+                                         paramValueSize: size_t,
+                                         paramValue: UnsafeMutableRawPointer,
+                                         paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
         guard let paramNameValueSize = Kernel.paramValueSizes[paramName] else {
             return false
         }
@@ -75,9 +75,10 @@ public final class Kernel: MetalKernel {
 
         return true
     }
-    public func setKernelArg(index: Int,
-                             size: Int,
-                             value: UnsafeRawPointer) {
+
+    internal func setKernelArg(index: Int,
+                               size: Int,
+                               value: UnsafeRawPointer) {
         if SWIFTCL_ENABLE_CONSOLE_LOG {
             print("\(#function)(arg_index: \(index), arg_size: \(size), arg_value: \(value))")
         }
@@ -117,8 +118,8 @@ public final class Kernel: MetalKernel {
         self.maxSetArgument = max(index, self.maxSetArgument)
     }
 
-    public func setKernelArgSVMPointer(index: Int,
-                                       value: UnsafeRawPointer) {
+    internal func setKernelArgSVMPointer(index: Int,
+                                         value: UnsafeRawPointer) {
         if SWIFTCL_ENABLE_CONSOLE_LOG {
             print("\(#function)(index: \(index), value: \(value))")
         }

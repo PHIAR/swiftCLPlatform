@@ -3,7 +3,7 @@ import COpenCL
 import Foundation
 import Metal
 
-public final class Sampler: MetalSampler {
+internal final class Sampler: MetalSampler {
     private static let addressingModesTable: [cl_addressing_mode: MTLSamplerAddressMode] = [
         cl_addressing_mode(CL_ADDRESS_NONE): .clampToEdge,
         cl_addressing_mode(CL_ADDRESS_REPEAT): .repeat,
@@ -15,10 +15,10 @@ public final class Sampler: MetalSampler {
         cl_addressing_mode(CL_FILTER_NEAREST): .nearest,
     ]
 
-    public init?(metalDevice: Device,
-                 normalizedCoords: Bool,
-                 addressingMode: cl_addressing_mode,
-                 filterMode: cl_filter_mode) {
+    internal init?(metalDevice: Device,
+                   normalizedCoords: Bool,
+                   addressingMode: cl_addressing_mode,
+                   filterMode: cl_filter_mode) {
         let device = metalDevice.device
         let descriptor = MTLSamplerDescriptor()
 

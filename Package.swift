@@ -1,6 +1,10 @@
 // swift-tools-version:5.2
 
+import Foundation
 import PackageDescription
+
+let packageURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
+let openCLMapFile = packageURL.appendingPathComponent("Sources/swiftCL/OpenCL.map").path
 
 let package = Package(
     name: "swiftCL",
@@ -9,10 +13,6 @@ let package = Package(
                  type: .dynamic,
                  targets: [
             "OpenCL",
-        ]),
-        .library(name: "COpenCL",
-                 targets: [
-            "COpenCL",
         ]),
     ],
     dependencies: [
@@ -28,8 +28,10 @@ let package = Package(
                 "opencl-c-headers",
             ]),
          ]),
+        .target(name: "clspv"),
         .target(name: "OpenCL",
                 dependencies: [
+            "clspv",
             "COpenCL",
             .product(name: "swiftMetal",
                      package: "swiftMetal"),
@@ -41,10 +43,20 @@ let package = Package(
             "OpenCL.map",
         ],
                 linkerSettings: [
-            .unsafeFlags([ "-Xlinker", "--version-script=Sources/swiftCL/OpenCL.map" ])
+            .unsafeFlags([
+                "-Xlinker", "-soname", "-Xlinker", "libOpenCL.so.1",
+                "-Xlinker", "--version-script=\(openCLMapFile)",
+            ]),
         ]),
         .testTarget(name: "swiftCLTests",
-                    dependencies: [ "OpenCL" ]),
+                    dependencies: [
+            "COpenCL",
+        ],
+                    linkerSettings: [
+            .unsafeFlags([
+                "-lOpenCL",
+            ]),
+        ]),
     ]
 )
 

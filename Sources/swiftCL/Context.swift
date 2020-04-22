@@ -8,7 +8,7 @@ internal final class Context: MetalContext {
         return self.metalDevice as! Device
     }
 
-    public required init?(metalDevice: Device) {
+    internal required init?(metalDevice: Device) {
         super.init(metalDevice: metalDevice)
 
         guard let metalCommandQueue = CommandQueue(metalContext: self) else {
@@ -18,18 +18,18 @@ internal final class Context: MetalContext {
         self.metalCommandQueue = metalCommandQueue
     }
 
-    public func createCommandQueue(properties: cl_command_queue_properties) -> CommandQueue? {
+    internal func createCommandQueue(properties: cl_command_queue_properties) -> CommandQueue? {
         return self.commandQueue() as? CommandQueue
     }
 
-    public func createEvent() -> MetalEvent? {
+    internal func createEvent() -> MetalEvent? {
         return MetalEvent(metalCommandQueue: self.commandQueue())
     }
 
-    public func createImage(flags: cl_mem_flags,
-                            imageFormat: UnsafePointer <cl_image_format>,
-                            imageDesc: Image.Descriptor,
-                            hostPtr: UnsafeRawPointer?) -> Image? {
+    internal func createImage(flags: cl_mem_flags,
+                              imageFormat: UnsafePointer <cl_image_format>,
+                              imageDesc: Image.Descriptor,
+                              hostPtr: UnsafeRawPointer?) -> Image? {
         if SWIFTCL_ENABLE_CONSOLE_LOG {
             print("createImage(flags: \(flags), imageFormat: \(imageFormat), imageDesc: \(imageDesc), host_ptr: \(String(describing: hostPtr))")
         }
@@ -43,9 +43,9 @@ internal final class Context: MetalContext {
         return image
     }
 
-    public func createProgram(count: Int,
-                              sources: [String]) -> Program? {
-        guard let metalCompiler = Platform.defaultPlatform.metalCompiler as? Compiler,
+    internal func createProgram(count: Int,
+                                sources: [String]) -> Program? {
+        guard let metalCompiler = Platform.allPlatforms[0].metalCompiler as? Compiler,
               let program = SourceProgram(metalContext: self,
                                           metalCompiler: metalCompiler,
                                           sources: sources) else {
@@ -55,7 +55,7 @@ internal final class Context: MetalContext {
         return program
     }
 
-    public func createProgramWithIL(_ data: DispatchData) -> Program? {
+    internal func createProgramWithIL(_ data: DispatchData) -> Program? {
         guard let program = ILProgram(metalContext: self,
                                       data: data) else {
             return nil
@@ -64,9 +64,9 @@ internal final class Context: MetalContext {
         return program
     }
 
-    public func createSampler(normalizedCoords: Bool,
-                              addressingMode: cl_addressing_mode,
-                              filterMode: cl_filter_mode) -> Sampler? {
+    internal func createSampler(normalizedCoords: Bool,
+                                addressingMode: cl_addressing_mode,
+                                filterMode: cl_filter_mode) -> Sampler? {
         let sampler = Sampler(metalDevice: self.device,
                               normalizedCoords: normalizedCoords,
                               addressingMode: addressingMode,

@@ -1,10 +1,6 @@
 import swiftMetal
 @_exported import COpenCL
 
-private let allPlatforms = [
-    Platform.defaultPlatform,
-]
-
 internal extension cl_platform_id {
     func toMetalPlatform(retained: Bool = false) -> Platform {
         guard retained else {
@@ -35,7 +31,7 @@ public func clGetDeviceIDs(_ platform: cl_platform_id?,
         print("\(#function)(platform: \(String(describing: platform)), device_type: \(device_type), num_entries: \(num_entries), devices: \(String(describing: devices)), num_devices: \(String(describing: num_devices)))")
     }
 
-    let _platform = platform ?? allPlatforms[0].toCLPlatform()
+    let _platform = platform ?? Platform.allPlatforms[0].toCLPlatform()
     let platform = _platform.toMetalPlatform()
     let platformDevices = platform.getDevices()
 
@@ -94,7 +90,7 @@ public func clGetPlatformIDs(_ num_entries: cl_uint,
 
     if num_entries == 0 {
         if let _num_platforms = num_platforms {
-            _num_platforms.pointee = cl_uint(allPlatforms.count)
+            _num_platforms.pointee = cl_uint(Platform.allPlatforms.count)
             return CL_SUCCESS
         }
 
@@ -105,12 +101,12 @@ public func clGetPlatformIDs(_ num_entries: cl_uint,
         return CL_INVALID_VALUE
     }
 
-    for i in 0..<((num_platforms != nil) ? min(Int(num_platforms!.pointee), allPlatforms.count) : allPlatforms.count) {
-        _platforms[i] = allPlatforms[i].toCLPlatform()
+    for i in 0..<((num_platforms != nil) ? min(Int(num_platforms!.pointee), Platform.allPlatforms.count) : Platform.allPlatforms.count) {
+        _platforms[i] = Platform.allPlatforms[i].toCLPlatform()
     }
 
     if let _num_platforms = num_platforms {
-        _num_platforms.pointee = cl_uint(allPlatforms.count)
+        _num_platforms.pointee = cl_uint(Platform.allPlatforms.count)
     }
 
     return CL_SUCCESS
@@ -126,6 +122,7 @@ public func clGetPlatformInfo(_ platform: cl_platform_id,
         print("\(#function)(platform: \(platform), param_name: \(param_name), param_value_size: \(param_value_size), param_value: \(String(describing: param_value)), param_value_size_ret: \(String(describing: param_value_size_ret))")
     }
 
+    param_value_size_ret?.pointee = 0
     return CL_SUCCESS
 }
 

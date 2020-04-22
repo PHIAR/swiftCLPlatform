@@ -10,10 +10,14 @@ internal let SWIFTCL_ENABLE_INSTRUMENTATION = false
 private let MTLCopyAllDevices = { return [ MTLCreateSystemDefaultDevice()! ] }
 #endif
 
-public final class Platform: MetalPlatform {
-    internal static let defaultPlatform = Platform()
+internal final class Platform: MetalPlatform {
+    private static let defaultPlatform = Platform()
 
-    public required init() {
+    internal static let allPlatforms = [
+        Platform.defaultPlatform,
+    ]
+
+    internal required init() {
         super.init(metalDevices: MTLCopyAllDevices().map { Device(device: $0) },
                    metalCompiler: Compiler())
     }

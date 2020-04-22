@@ -30,7 +30,7 @@ public func clCreateBuffer(_ context: cl_context,
                            _ host_ptr: UnsafeMutableRawPointer?,
                            _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_mem? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), flags: \(flags), size: \(size), host_ptr: \(String(describing: host_ptr))")
+        print("\(#function)(context: \(context), flags: \(flags), size: \(size), host_ptr: \(String(describing: host_ptr)))")
     }
 
     let _context = context.toContext()
@@ -42,7 +42,7 @@ public func clCreateBuffer(_ context: cl_context,
     }
 
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context): return \(String(describing: buffer))")
+        print("\(#function)(context: \(context): return \(String(describing: buffer)))")
     }
 
     errcode_ret?.pointee = CL_SUCCESS
@@ -55,7 +55,7 @@ public func clCreateCommandQueue(_ context: cl_context,
                                  _ properties: cl_command_queue_properties,
                                  _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_command_queue? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), device: \(String(describing: device)), properties: \(properties)")
+        print("\(#function)(context: \(context), device: \(String(describing: device)), properties: \(properties))")
     }
 
     let _context = context.toContext()
@@ -75,7 +75,7 @@ public func clCreateCommandQueueWithProperties(_ context: cl_context,
                                                _ properties: UnsafePointer <cl_queue_properties>,
                                                _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_command_queue? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), device: \(device), properties: \(properties)")
+        print("\(#function)(context: \(context), device: \(device), properties: \(properties))")
     }
 
     let _context = context.toContext()
@@ -100,7 +100,7 @@ public func clCreateContext(_ properties: UnsafePointer <cl_context_properties>?
                             _ user_data: UnsafeMutableRawPointer?,
                             _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_context? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(properties: \(String(describing: properties)), num_devices: \(num_devices), devices: \(String(describing: devices)), pfn_notify: \(String(describing: pfn_notify)), user_data: \(String(describing: user_data))")
+        print("\(#function)(properties: \(String(describing: properties)), num_devices: \(num_devices), devices: \(String(describing: devices)), pfn_notify: \(String(describing: pfn_notify)), user_data: \(String(describing: user_data)))")
     }
 
     guard let _devices = devices,
@@ -130,7 +130,7 @@ public func clCreateContextFromType(_ properties: UnsafePointer <cl_context_prop
                                     _ user_data: UnsafeMutableRawPointer,
                                     _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_context? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(properties: \(properties), device_type: \(device_type), pfn_notify: \(String(describing: pfn_notify)), user_data: \(user_data)")
+        print("\(#function)(properties: \(properties), device_type: \(device_type), pfn_notify: \(String(describing: pfn_notify)), user_data: \(user_data))")
     }
 
     return nil
@@ -145,14 +145,14 @@ public func clCreateImage(_ context: cl_context,
                           _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_mem? {
     let _context = context.toContext()
     let image_desc = Image.Descriptor(image_type: image_desc.pointee.image_type,
-                                     image_width: image_desc.pointee.image_width,
-                                     image_height: image_desc.pointee.image_height,
-                                     image_depth: image_desc.pointee.image_depth,
-                                     image_array_size: image_desc.pointee.image_array_size,
-                                     image_row_pitch: image_desc.pointee.image_row_pitch,
-                                     image_slice_pitch: image_desc.pointee.image_slice_pitch,
-                                     num_mip_levels: Int(image_desc.pointee.num_mip_levels),
-                                     num_samples: Int(image_desc.pointee.num_samples))
+                                      image_width: image_desc.pointee.image_width,
+                                      image_height: image_desc.pointee.image_height,
+                                      image_depth: image_desc.pointee.image_depth,
+                                      image_array_size: image_desc.pointee.image_array_size,
+                                      image_row_pitch: image_desc.pointee.image_row_pitch,
+                                      image_slice_pitch: image_desc.pointee.image_slice_pitch,
+                                      num_mip_levels: Int(image_desc.pointee.num_mip_levels),
+                                      num_samples: Int(image_desc.pointee.num_samples))
 
     guard let image = _context.createImage(flags: flags,
                                            imageFormat: image_format,
@@ -242,7 +242,7 @@ public func clCreatePipe(_ context: cl_context,
                          _ properties: UnsafePointer <cl_pipe_properties>,
                          _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_mem? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), flags: \(flags), pipe_packet_size: \(pipe_packet_size), pipe_max_packets: \(pipe_max_packets), properties: \(properties)")
+        print("\(#function)(context: \(context), flags: \(flags), pipe_packet_size: \(pipe_packet_size), pipe_max_packets: \(pipe_max_packets), properties: \(properties))")
     }
 
     return nil
@@ -255,7 +255,7 @@ public func clCreateProgramWithSource(_ context: cl_context,
                                       _ lengths: UnsafePointer <size_t>?,
                                       _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_program? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), count: \(count), strings: \(strings), lengths: \(String(describing: lengths))")
+        print("\(#function)(context: \(context), count: \(count), strings: \(strings), lengths: \(String(describing: lengths)))")
     }
 
     var sources: [String] = []
@@ -287,7 +287,7 @@ public func clCreateProgramWithBinary(_ context: cl_context,
                                       _ binary_status: UnsafeMutablePointer <cl_int>?,
                                       _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_program? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), num_devices: \(num_devices), device_list: \(device_list), lengths: \(lengths), binaries: \(binaries), binary_status: \(String(describing: binary_status))")
+        print("\(#function)(context: \(context), num_devices: \(num_devices), device_list: \(device_list), lengths: \(lengths), binaries: \(binaries), binary_status: \(String(describing: binary_status)))")
     }
 
     return nil
@@ -300,7 +300,7 @@ public func clCreateProgramWithBuiltInKernels(_ context: cl_context,
                                               _ kernel_names: UnsafePointer <CChar>,
                                               _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_program? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(context: \(context), num_devices: \(num_devices), device_list: \(device_list), kernel_names: \(kernel_names)")
+        print("\(#function)(context: \(context), num_devices: \(num_devices), device_list: \(device_list), kernel_names: \(kernel_names))")
     }
 
     return nil
