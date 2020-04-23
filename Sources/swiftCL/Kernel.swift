@@ -3,7 +3,7 @@ import COpenCL
 import Foundation
 import Metal
 
-public final class Kernel: MetalKernel {
+internal final class Kernel: MetalKernel {
     private static let paramValueSizes: [cl_kernel_work_group_info: Int] = [
         cl_kernel_work_group_info(CL_KERNEL_COMPILE_WORK_GROUP_SIZE): MemoryLayout <size_t>.size,
         cl_kernel_work_group_info(CL_KERNEL_LOCAL_MEM_SIZE): MemoryLayout <UInt64>.size,

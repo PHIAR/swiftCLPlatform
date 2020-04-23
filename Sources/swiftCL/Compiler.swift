@@ -4,7 +4,6 @@ import COpenCL
 import Foundation
 import Metal
 
-
 internal final class CompilerSession: MetalCompilerSession {
     private typealias BuildProgram = @convention (c) (UnsafePointer <CChar>, UnsafePointer <CChar>, UnsafeMutablePointer <byte_code_t>) -> Bool
     private typealias DestroyByteCode = @convention (c) (UnsafeMutablePointer <byte_code_t>) -> Void
@@ -46,8 +45,12 @@ internal final class CompilerSession: MetalCompilerSession {
         }
 
         self.spirv = spirv
-        super.init(source: source,
-                   metalSource: source)
+        super.init(source: source)
+    }
+
+    public override func getMetalLibrary(device: MTLDevice,
+                                         preprocessorMacros: [String : NSObject]? = nil) -> MTLLibrary? {
+        return device.makeLibrary(spirv: self.spirv)
     }
 }
 

@@ -4,7 +4,7 @@ import Foundation
 import Metal
 
 internal class Program: MetalProgram {
-    public final func createKernel(name: UnsafePointer <CChar>) -> cl_kernel? {
+    internal final func createKernel(name: UnsafePointer <CChar>) -> cl_kernel? {
         let kernelName = String(cString: name)
 
         if SWIFTCL_ENABLE_CONSOLE_LOG {
@@ -30,8 +30,8 @@ internal class Program: MetalProgram {
 }
 
 internal final class ILProgram: Program {
-    public init?(metalContext: Context,
-                 data: DispatchData) {
+    internal init?(metalContext: Context,
+                   data: DispatchData) {
         let library: MTLLibrary
 
         do {

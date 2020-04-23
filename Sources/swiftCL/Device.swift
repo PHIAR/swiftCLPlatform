@@ -3,7 +3,7 @@ import COpenCL
 import Foundation
 import Metal
 
-public final class Device: MetalDevice {
+internal final class Device: MetalDevice {
     private static let deviceVersion = "OpenCL 2.0"
     private static let driverVersion = "2.0"
     private static let paramValueSizes: [cl_device_info: Int] = [
