@@ -58,6 +58,6 @@ internal final class Compiler: MetalCompiler {
     func makeSession(source: String,
                      options: String) -> CompilerSession? {
         return CompilerSession(source: source,
-                              options: options)
+                               options: options)
     }
 }
