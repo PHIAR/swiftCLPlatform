@@ -5,9 +5,11 @@
 
 #include "clspv.h"
 
-#if defined(__ANDROID__)
+#if defined(__linux__)
+static auto const &compileFromSourceStringSymbolName = "_ZN5clspv23CompileFromSourceStringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_S7_PSt6vectorIjSaIjEEPS8_INS_8version018DescriptorMapEntryESaISD_EE";
+#elif defined(__ANDROID__)
 static auto const &compileFromSourceStringSymbolName = "_ZN5clspv23CompileFromSourceStringERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEES8_S8_PNS0_6vectorIjNS4_IjEEEEPNS9_INS_8version018DescriptorMapEntryENS4_ISE_EEEE";
-#elif defined(__linux__)
+#elif defined(__APPLE__)
 static auto const &compileFromSourceStringSymbolName = "_ZN5clspv23CompileFromSourceStringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_S7_PSt6vectorIjSaIjEEPS8_INS_8version018DescriptorMapEntryESaISD_EE";
 #endif
 

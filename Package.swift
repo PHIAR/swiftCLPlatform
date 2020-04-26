@@ -3,11 +3,20 @@
 import Foundation
 import PackageDescription
 
+// MARK - Platform configuration
+
+let platforms: [SupportedPlatform] = [
+    .iOS("13.2"),
+    .macOS("10.15"),
+    .tvOS("13.2")
+]
+
 let packageURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
 let openCLMapFile = packageURL.appendingPathComponent("Sources/swiftCL/OpenCL.map").path
 
 let package = Package(
     name: "swiftCL",
+    platforms: platforms,
     products: [
         .library(name: "OpenCL",
                  type: .dynamic,

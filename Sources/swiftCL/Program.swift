@@ -35,7 +35,7 @@ internal final class ILProgram: Program {
         let library: MTLLibrary
 
         do {
-            library = try metalContext.metalDevice.device.makeLibrary(data: data)
+            library = try metalContext.metalDevice.device.makeLibrary(data: data as __DispatchData)
         } catch {
             return nil
         }
