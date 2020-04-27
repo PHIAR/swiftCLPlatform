@@ -55,23 +55,29 @@ clspvBuildProgram(void *compiler_library,
             continue;
         }
 
-        auto &function_argument = byte_code->function_arguments[binding];
-
         switch (descriptor_map_entry.kind) {
         case DescriptorMapEntry::Constant:
-            function_argument = function_argument_constant;
+            byte_code->function_arguments[binding] = function_argument_constant;
             break;
 
-        case DescriptorMapEntry::KernelArg:
-            function_argument = function_argument_buffer;
+        case DescriptorMapEntry::KernelArg: {
+            auto &function_argument = byte_code->function_arguments[descriptor_map_entry.kernel_arg_data.arg_ordinal];
+
+            if (descriptor_map_entry.kernel_arg_data.arg_kind == clspv::ArgKind::PodPushConstant) {
+                function_argument = function_argument_constant;
+            } else {
+                function_argument = function_argument_buffer;
+            }
+
             break;
+        }
 
         case DescriptorMapEntry::Sampler:
-            function_argument = function_argument_sampler;
+            byte_code->function_arguments[binding] = function_argument_sampler;
             break;
 
         default:
-            function_argument = function_argument_unknown;
+            byte_code->function_arguments[binding] = function_argument_unknown;
             break;
         }
     }
