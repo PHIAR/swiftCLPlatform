@@ -42,13 +42,57 @@ clspvBuildProgram(void *compiler_library,
     byte_code->code = static_cast <uint32_t *> (malloc(output_binary.size() * sizeof(uint32_t)));
     byte_code->length = output_binary.size();
     memcpy(byte_code->code, &output_binary[0], output_binary.size() * sizeof(uint32_t));
+
+    byte_code->function_arguments = static_cast <function_argument_e *> (malloc(descriptor_map_entries.size() * sizeof(function_argument_e)));
+    byte_code->function_arguments_count = descriptor_map_entries.size();
+
+    for (auto const &descriptor_map_entry: descriptor_map_entries) {
+        using namespace clspv::version0;
+
+        auto const &binding = descriptor_map_entry.binding;
+
+        if (binding >= descriptor_map_entries.size()) {
+            continue;
+        }
+
+        auto &function_argument = byte_code->function_arguments[binding];
+
+        switch (descriptor_map_entry.kind) {
+        case DescriptorMapEntry::Constant:
+            function_argument = function_argument_constant;
+            break;
+
+        case DescriptorMapEntry::KernelArg:
+            function_argument = function_argument_buffer;
+            break;
+
+        case DescriptorMapEntry::Sampler:
+            function_argument = function_argument_sampler;
+            break;
+
+        default:
+            function_argument = function_argument_unknown;
+            break;
+        }
+    }
+
     return true;
 }
 
 void
 clspvDestroyByteCode(byte_code_t *byte_code)
 {
-    free(byte_code->code);
-    byte_code->code = nullptr;
+    if (byte_code->code) {
+        free(byte_code->code);
+        byte_code->code = nullptr;
+    }
+
     byte_code->length = 0;
+
+    if (byte_code->function_arguments) {
+        free(byte_code->function_arguments);
+        byte_code->function_arguments = nullptr;
+    }
+
+    byte_code->function_arguments_count = 0;
 }
