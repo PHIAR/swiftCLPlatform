@@ -19,6 +19,9 @@ internal final class CompilerSession: MetalCompilerSession {
 
     private static let shaderPreamble =  """
     #define convert_uchar_sat convert_uchar
+    #define convert_uchar2_sat convert_uchar2
+    #define convert_uchar3_sat convert_uchar3
+    #define convert_uchar4_sat convert_uchar4
 
     """
 
