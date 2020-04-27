@@ -39,11 +39,11 @@ clspvBuildProgram(void *compiler_library,
         return false;
     }
 
-    byte_code->code = static_cast <uint32_t *> (malloc(output_binary.size() * sizeof(uint32_t)));
+    byte_code->code = static_cast <uint32_t *> (calloc(output_binary.size(), sizeof(uint32_t)));
     byte_code->length = output_binary.size();
     memcpy(byte_code->code, &output_binary[0], output_binary.size() * sizeof(uint32_t));
 
-    byte_code->function_arguments = static_cast <function_argument_e *> (malloc(descriptor_map_entries.size() * sizeof(function_argument_e)));
+    byte_code->function_arguments = static_cast <function_argument_e *> (calloc(descriptor_map_entries.size(), sizeof(function_argument_e)));
     byte_code->function_arguments_count = descriptor_map_entries.size();
 
     for (auto const &descriptor_map_entry: descriptor_map_entries) {
