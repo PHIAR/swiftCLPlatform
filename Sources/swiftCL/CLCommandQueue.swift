@@ -59,9 +59,9 @@ public func clEnqueueNDRangeKernel(_ command_queue: cl_command_queue,
         print("\(#function)(command_queue: \(command_queue), kernel: \(kernel), work_dim: \(work_dim), num_events_in_wait_list: \(num_events_in_wait_list), event_wait_list: \(String(describing: event_wait_list)), event: \(String(describing: event))")
 
         for i in 0..<Int(work_dim) {
-            print("    global [work_offset: %zu, work_size: %zu], local_work_size: %zu",
+            print(String(format: "    global [work_offset: %zu, work_size: %zu], local_work_size: %zu",
                   (global_work_offset != nil) ? global_work_offset![i] : 0, global_work_size[i],
-                  (local_work_size != nil) ? local_work_size![i] : 0)
+                  (local_work_size != nil) ? local_work_size![i] : 0))
         }
     }
 
