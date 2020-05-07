@@ -56,6 +56,8 @@ internal final class CompilerSession: MetalCompilerSession {
     #define convert_ushort4_sat convert_ushort4
     #define convert_ushort4_sat_rte convert_ushort4
 
+    #define hypot(x, y) sqrt((x * x) + (y * y))
+
     """
 
     private let spirv: [UInt32]
@@ -63,6 +65,7 @@ internal final class CompilerSession: MetalCompilerSession {
 
     internal init?(source: String,
                    options: String) {
+//print("XXX:\n\(source)\nOptions:\n\(options)")
         let _source = CompilerSession.shaderPreamble + source
         let _options = "--int8 --pod-pushconstant -w -O=3 \(options)"
         let (spirv: spirv,
