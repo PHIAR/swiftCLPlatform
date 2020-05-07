@@ -202,7 +202,6 @@ internal final class Device: MetalDevice {
              CL_DEVICE_IMAGE3D_MAX_DEPTH,
              CL_DEVICE_IMAGE3D_MAX_HEIGHT,
              CL_DEVICE_IMAGE3D_MAX_WIDTH:
-             print(paramName)
             let value = self.paramValues[paramName] as! UInt64
             let pointer = paramValue.assumingMemoryBound(to: UInt64.self)
 
@@ -227,6 +226,8 @@ internal final class Device: MetalDevice {
 
         default:
             print(String(format: "\(#function)(device: \(device), paramName: 0x%04x, paramValueSize: \(paramValueSize), paramValue: \(paramValue), paramValueSizeRet: \(String(describing: paramValueSizeRet)))", paramName))
+            let pointer = paramValue.assumingMemoryBound(to: CChar.self)
+            pointer.pointee = 0
         }
 
         if let _paramValueSizeRet = paramValueSizeRet {
