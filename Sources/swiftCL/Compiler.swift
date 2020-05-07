@@ -18,6 +18,26 @@ internal final class CompilerSession: MetalCompilerSession {
     }()
 
     private static let shaderPreamble =  """
+    #pragma OPENCL EXTENSION cl_khr_fp16: enable
+
+    #define convert_char_sat convert_char
+    #define convert_char_sat_rte convert_char
+    #define convert_char2_sat convert_char2
+    #define convert_char2_sat_rte convert_char2
+    #define convert_char3_sat convert_char3
+    #define convert_char3_sat_rte convert_char3
+    #define convert_char4_sat convert_char4
+    #define convert_char4_sat_rte convert_char4
+
+    #define convert_short_sat convert_short
+    #define convert_short_sat_rte convert_short
+    #define convert_short2_sat convert_short2
+    #define convert_short2_sat_rte convert_short2
+    #define convert_short3_sat convert_short3
+    #define convert_short3_sat_rte convert_short3
+    #define convert_short4_sat convert_short4
+    #define convert_short4_sat_rte convert_short4
+
     #define convert_uchar_sat convert_uchar
     #define convert_uchar_sat_rte convert_uchar
     #define convert_uchar2_sat convert_uchar2
@@ -26,6 +46,15 @@ internal final class CompilerSession: MetalCompilerSession {
     #define convert_uchar3_sat_rte convert_uchar3
     #define convert_uchar4_sat convert_uchar4
     #define convert_uchar4_sat_rte convert_uchar4
+
+    #define convert_ushort_sat convert_ushort
+    #define convert_ushort_sat_rte convert_ushort
+    #define convert_ushort2_sat convert_ushort2
+    #define convert_ushort2_sat_rte convert_ushort2
+    #define convert_ushort3_sat convert_ushort3
+    #define convert_ushort3_sat_rte convert_ushort3
+    #define convert_ushort4_sat convert_ushort4
+    #define convert_ushort4_sat_rte convert_ushort4
 
     """
 
