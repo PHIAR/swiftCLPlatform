@@ -126,14 +126,30 @@ public func clCreateContextFromType(_ properties: UnsafePointer <cl_context_prop
                                     _ pfn_notify: (@convention(c) (UnsafePointer <CChar>?,
                                                                    UnsafeRawPointer?,
                                                                    size_t,
-                                                                   UnsafeMutableRawPointer) -> Void)?,
+                                                                   UnsafeMutableRawPointer?) -> Void)?,
                                     _ user_data: UnsafeMutableRawPointer,
                                     _ errcode_ret: UnsafeMutablePointer <cl_int>?) -> cl_context? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
         print("\(#function)(properties: \(properties), device_type: \(device_type), pfn_notify: \(String(describing: pfn_notify)), user_data: \(user_data))")
     }
 
-    return nil
+    guard device_type == CL_DEVICE_TYPE_GPU else {
+        errcode_ret?.pointee = CL_INVALID_PROPERTY
+        return nil
+    }
+
+    var deviceId: cl_device_id? = nil
+    let result = clGetDeviceIDs(nil, device_type, 1, &deviceId, nil)
+
+    guard result == CL_SUCCESS else {
+        errcode_ret?.pointee = result
+        return nil
+    }
+
+    let context = clCreateContext(properties, 1, &deviceId, pfn_notify, user_data, errcode_ret)
+
+    errcode_ret?.pointee = CL_SUCCESS
+    return context
 }
 
 @_cdecl("clCreateImage")
@@ -386,6 +402,15 @@ public func clGetContextInfo(_ context: cl_context,
                              _ param_value_size_ret: UnsafeMutablePointer <size_t>) -> cl_int {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
         print("\(#function)(context: \(context))")
+    }
+
+    let _context = context.toContext()
+
+    guard _context.getContextInfo(paramName: param_name,
+                                  paramValueSize: param_value_size,
+                                  paramValue: param_value,
+                                  paramValueSizeRet: param_value_size_ret) else {
+        return CL_INVALID_VALUE
     }
 
     return CL_SUCCESS

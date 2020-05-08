@@ -74,4 +74,25 @@ internal final class Context: MetalContext {
 
         return sampler
     }
+
+    internal func getContextInfo(paramName: cl_context_info,
+                                 paramValueSize: Int,
+                                 paramValue: UnsafeMutableRawPointer?,
+                                 paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
+        switch Int32(paramName) {
+        case CL_CONTEXT_DEVICES:
+            let device = cl_device_id(UnsafeRawPointer(Unmanaged.passUnretained(self.device).toOpaque()))
+
+            paramValueSizeRet?.pointee = MemoryLayout <cl_device_id>.size
+            paramValue?.assumingMemoryBound(to: cl_device_id.self).pointee = device
+
+        case CL_CONTEXT_NUM_DEVICES:
+            paramValue?.assumingMemoryBound(to: cl_uint.self).pointee = 1
+
+        default:
+            print(String(format: "\(#function)(paramName: 0x%04x, paramValueSize: \(paramValueSize), paramValue: \(String(describing: paramValue)), paramValueSizeRet: \(String(describing: paramValueSizeRet)))", paramName))
+        }
+
+        return true
+    }
 }

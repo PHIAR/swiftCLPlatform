@@ -46,18 +46,17 @@ public func clGetDeviceAndHostTimer(_ device: cl_device_id,
 }
 
 @_cdecl("clGetDeviceInfo")
-public func clGetDeviceInfo(_ device: cl_device_id,
+public func clGetDeviceInfo(_ device: cl_device_id?,
                             _ param_name: cl_device_info,
                             _ param_value_size: size_t,
                             _ param_value: UnsafeMutableRawPointer,
                             _ param_value_size_ret: UnsafeMutablePointer <size_t>) -> cl_int {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print(String(format: "\(#function)(device: \(device), param_name: 0x%04x, param_value_size: \(param_value_size), param_value: \(String(describing: param_value)), param_value_size_ret: \(String(describing: param_value_size_ret)))", param_name))
+        print(String(format: "\(#function)(device: \(String(describing: device)), param_name: 0x%04x, param_value_size: \(param_value_size), param_value: \(String(describing: param_value)), param_value_size_ret: \(String(describing: param_value_size_ret)))", param_name))
     }
 
-    let _device = device.toDevice()
-
-    guard _device.getDeviceInfo(paramName: param_name,
+    guard let _device = device?.toDevice(),
+          _device.getDeviceInfo(paramName: param_name,
                                 paramValueSize: param_value_size,
                                 paramValue: param_value,
                                 paramValueSizeRet: param_value_size_ret) else {

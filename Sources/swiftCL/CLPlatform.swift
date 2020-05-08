@@ -2,7 +2,7 @@ import swiftMetal
 @_exported import COpenCL
 
 internal extension cl_platform_id {
-    func toMetalPlatform(retained: Bool = false) -> Platform {
+    func toPlatform(retained: Bool = false) -> Platform {
         guard retained else {
             return Unmanaged <Platform>.fromOpaque(UnsafeRawPointer(self)!).takeUnretainedValue()
         }
@@ -32,7 +32,7 @@ public func clGetDeviceIDs(_ platform: cl_platform_id?,
     }
 
     let _platform = platform ?? Platform.allPlatforms[0].toCLPlatform()
-    let platform = _platform.toMetalPlatform()
+    let platform = _platform.toPlatform()
     let platformDevices = platform.getDevices()
 
     if num_entries == 0 {
@@ -113,16 +113,24 @@ public func clGetPlatformIDs(_ num_entries: cl_uint,
 }
 
 @_cdecl("clGetPlatformInfo") @discardableResult
-public func clGetPlatformInfo(_ platform: cl_platform_id,
+public func clGetPlatformInfo(_ platform: cl_platform_id?,
                               _ param_name: cl_platform_info,
                               _ param_value_size: size_t,
                               _ param_value: UnsafeMutableRawPointer?,
                               _ param_value_size_ret: UnsafeMutablePointer <size_t>?) -> cl_int {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(platform: \(platform), param_name: \(param_name), param_value_size: \(param_value_size), param_value: \(String(describing: param_value)), param_value_size_ret: \(String(describing: param_value_size_ret))")
+        print("\(#function)(platform: \(String(describing: platform)), param_name: \(param_name), param_value_size: \(param_value_size), param_value: \(String(describing: param_value)), param_value_size_ret: \(String(describing: param_value_size_ret))")
     }
 
-    param_value_size_ret?.pointee = 0
+    let _platform = platform?.toPlatform() ?? Platform.allPlatforms[0]
+
+    guard _platform.getPlatformInfo(paramName: param_name,
+                                    paramValueSize: param_value_size,
+                                    paramValue: param_value,
+                                    paramValueSizeRet: param_value_size_ret) else {
+        return CL_INVALID_VALUE
+    }
+
     return CL_SUCCESS
 }
 
@@ -141,8 +149,8 @@ public func clUnloadPlatformCompiler(_ platform: cl_platform_id) -> cl_int {
         print("\(#function)(platform: \(platform))")
     }
 
-    let platform = platform.toMetalPlatform()
+    let _platform = platform.toPlatform()
 
-    platform.unloadCompiler()
+    _platform.unloadCompiler()
     return CL_SUCCESS
 }
