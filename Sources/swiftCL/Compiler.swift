@@ -61,7 +61,7 @@ internal final class CompilerSession: MetalCompilerSession {
     """
 
     private let spirv: [UInt32]
-    private let functionArgumentTypes: FunctionArgumentTypes
+    private let functionArgumentTypes: [String: FunctionArgumentTypes]
 
     internal init?(source: String,
                    options: String) {
@@ -69,7 +69,7 @@ internal final class CompilerSession: MetalCompilerSession {
         let _options = "--pod-pushconstant -w -O=3 \(options)"
         let (spirv: spirv,
              functionArgumentTypes: functionArgumentTypes): (spirv: [UInt32],
-                                                             functionArgumentTypes: FunctionArgumentTypes) = _source.withCString { _metalSource in
+                                                             functionArgumentTypes: [String: FunctionArgumentTypes]) = _source.withCString { _metalSource in
             var byteCode = byte_code_t()
 
             _options.withCString { _options in
@@ -83,23 +83,61 @@ internal final class CompilerSession: MetalCompilerSession {
                                                   count: Int(byteCode.length)))
             let _functionArgumentTypes = Array(UnsafeBufferPointer(start: byteCode.function_arguments,
                                                                    count: Int(byteCode.function_arguments_count)))
-            let functionArgumentTypes: [FunctionArgumentType] = _functionArgumentTypes.map {
-                switch $0 {
-                case function_argument_buffer:
-                    return .buffer
+            var functionArgumentTypes: [String: FunctionArgumentTypes] = [:]
+            var podUBOOffsetsAndSizes: [String: [(bindingIndex: Int,
+                                                  index: Int,
+                                                  offset: Int,
+                                                  size: Int)]] = [:]
 
-                case function_argument_constant:
-                    return .constant
+            for _functionArgumentType in _functionArgumentTypes {
+                guard let _entryPoint = _functionArgumentType.entry_point else {
+                    continue
+                }
+
+                let entryPoint = String(cString: _entryPoint)
+
+                if functionArgumentTypes[entryPoint] == nil {
+                    functionArgumentTypes[entryPoint] = []
+                }
+
+                switch _functionArgumentType.type {
+                case function_argument_buffer:
+                    functionArgumentTypes[entryPoint]!.append(.buffer)
+
+                case function_argument_buffer_ubo:
+                    functionArgumentTypes[entryPoint]!.append(.buffer)
+
+                case function_argument_pod:
+                    functionArgumentTypes[entryPoint]!.append(.constant)
+
+                case function_argument_pod_push_constant:
+                    functionArgumentTypes[entryPoint]!.append(.constant)
+
+                case function_argument_pod_ubo:
+                    functionArgumentTypes[entryPoint]!.append(.buffer)
 
                 case function_argument_sampler:
-                    return .sampler
+                    functionArgumentTypes[entryPoint]!.append(.sampler)
 
                 case function_argument_unknown:
-                    return .unknown
+                    functionArgumentTypes[entryPoint]!.append(.unknown)
 
                 default:
                     preconditionFailure()
                 }
+
+                guard _functionArgumentType.type == function_argument_pod_ubo else {
+                    continue
+                }
+
+                if podUBOOffsetsAndSizes[entryPoint] == nil {
+                    podUBOOffsetsAndSizes[entryPoint] = []
+                }
+
+                podUBOOffsetsAndSizes[entryPoint]!.append((bindingIndex: _functionArgumentType.bindingIndex,
+                                                           index: _functionArgumentType.index,
+                                                           offset: _functionArgumentType.offset,
+                                                           size: _functionArgumentType.size))
             }
 
             clspvDestroyByteCode(&byteCode)

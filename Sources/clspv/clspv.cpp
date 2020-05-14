@@ -1,5 +1,6 @@
-#include <dlfcn.h>
+#include <cassert>
 #include <cstring>
+#include <dlfcn.h>
 #include <string>
 #include <clspv/Compiler.h>
 
@@ -43,41 +44,68 @@ clspvBuildProgram(void *compiler_library,
     byte_code->length = output_binary.size();
     memcpy(byte_code->code, &output_binary[0], output_binary.size() * sizeof(uint32_t));
 
-    byte_code->function_arguments = static_cast <function_argument_e *> (calloc(descriptor_map_entries.size(), sizeof(function_argument_e)));
+    byte_code->function_arguments = static_cast <function_argument_t *> (calloc(descriptor_map_entries.size(), sizeof(function_argument_t)));
     byte_code->function_arguments_count = descriptor_map_entries.size();
 
-    for (auto const &descriptor_map_entry: descriptor_map_entries) {
+    for (auto &&i = size_t(0); i < descriptor_map_entries.size(); ++i) {
         using namespace clspv::version0;
 
-        auto const &binding = descriptor_map_entry.binding;
+        auto const &descriptor_map_entry = descriptor_map_entries[i];
+        auto const &bindingIndex = descriptor_map_entry.binding;
 
-        if (binding >= descriptor_map_entries.size()) {
+        if (bindingIndex >= descriptor_map_entries.size()) {
             continue;
         }
 
+        auto &function_argument = byte_code->function_arguments[i];
+
+        function_argument.bindingIndex = bindingIndex;
+
         switch (descriptor_map_entry.kind) {
         case DescriptorMapEntry::Constant:
-            byte_code->function_arguments[binding] = function_argument_constant;
+            function_argument.type = function_argument_constant;
             break;
 
         case DescriptorMapEntry::KernelArg: {
-            auto &function_argument = byte_code->function_arguments[descriptor_map_entry.kernel_arg_data.arg_ordinal];
+            function_argument.entry_point = strdup(descriptor_map_entry.kernel_arg_data.kernel_name.c_str());
+            function_argument.index = descriptor_map_entry.kernel_arg_data.arg_ordinal;
+            function_argument.offset = descriptor_map_entry.kernel_arg_data.pod_offset;
+            function_argument.size = descriptor_map_entry.kernel_arg_data.pod_arg_size;
 
-            if (descriptor_map_entry.kernel_arg_data.arg_kind == clspv::ArgKind::PodPushConstant) {
-                function_argument = function_argument_constant;
-            } else {
-                function_argument = function_argument_buffer;
+            switch (descriptor_map_entry.kernel_arg_data.arg_kind) {
+            case clspv::ArgKind::Buffer:
+                function_argument.type = function_argument_buffer;
+                break;
+
+            case clspv::ArgKind::BufferUBO:
+                function_argument.type = function_argument_buffer_ubo;
+                break;
+
+            case clspv::ArgKind::Pod:
+                function_argument.type = function_argument_pod;
+                break;
+
+            case clspv::ArgKind::PodPushConstant:
+                function_argument.type = function_argument_pod_push_constant;
+                break;
+
+            case clspv::ArgKind::PodUBO:
+                function_argument.type = function_argument_pod_ubo;
+                break;
+
+            default:
+                assert(false);
             }
 
             break;
         }
 
         case DescriptorMapEntry::Sampler:
-            byte_code->function_arguments[binding] = function_argument_sampler;
+            function_argument.type = function_argument_sampler;
             break;
 
         default:
-            byte_code->function_arguments[binding] = function_argument_unknown;
+            function_argument.type = function_argument_unknown;
             break;
         }
     }
@@ -95,10 +123,16 @@ clspvDestroyByteCode(byte_code_t *byte_code)
 
     byte_code->length = 0;
 
-    if (byte_code->function_arguments) {
-        free(byte_code->function_arguments);
-        byte_code->function_arguments = nullptr;
-    }
+    if (byte_code->function_arguments_count) {
+        for (auto &&i = size_t(0); i < byte_code->function_arguments_count; ++i) {
+            free(const_cast <char *> (byte_code->function_arguments[i].entry_point));
+        }
 
-    byte_code->function_arguments_count = 0;
+        if (byte_code->function_arguments) {
+            free(byte_code->function_arguments);
+            byte_code->function_arguments = nullptr;
+        }
+
+        byte_code->function_arguments_count = 0;
+    }
 }
