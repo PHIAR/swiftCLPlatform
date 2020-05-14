@@ -51,23 +51,13 @@ clspvBuildProgram(void *compiler_library,
         using namespace clspv::version0;
 
         auto const &descriptor_map_entry = descriptor_map_entries[i];
-        auto const &bindingIndex = descriptor_map_entry.binding;
-
-        if (bindingIndex >= descriptor_map_entries.size()) {
-            continue;
-        }
-
-        auto &function_argument = byte_code->function_arguments[i];
-
-        function_argument.bindingIndex = bindingIndex;
 
         switch (descriptor_map_entry.kind) {
-        case DescriptorMapEntry::Constant:
-            function_argument.type = function_argument_constant;
-            break;
-
         case DescriptorMapEntry::KernelArg: {
+            auto &function_argument = byte_code->function_arguments[i];
+
             function_argument.entry_point = strdup(descriptor_map_entry.kernel_arg_data.kernel_name.c_str());
+            function_argument.bindingIndex = descriptor_map_entry.binding;
             function_argument.index = descriptor_map_entry.kernel_arg_data.arg_ordinal;
             function_argument.offset = descriptor_map_entry.kernel_arg_data.pod_offset;
             function_argument.size = descriptor_map_entry.kernel_arg_data.pod_arg_size;
@@ -100,12 +90,7 @@ clspvBuildProgram(void *compiler_library,
             break;
         }
 
-        case DescriptorMapEntry::Sampler:
-            function_argument.type = function_argument_sampler;
-            break;
-
         default:
-            function_argument.type = function_argument_unknown;
             break;
         }
     }

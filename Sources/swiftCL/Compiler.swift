@@ -100,27 +100,34 @@ internal final class CompilerSession: MetalCompilerSession {
                     functionArgumentTypes[entryPoint] = []
                 }
 
+                if _functionArgumentType.index >= functionArgumentTypes[entryPoint]!.count {
+                    functionArgumentTypes[entryPoint]! += Array(repeating: .unknown,
+                                                                count: _functionArgumentType.index -
+                                                                       functionArgumentTypes[entryPoint]!.count +
+                                                                       1)
+                }
+
                 switch _functionArgumentType.type {
                 case function_argument_buffer:
-                    functionArgumentTypes[entryPoint]!.append(.buffer)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .buffer
 
                 case function_argument_buffer_ubo:
-                    functionArgumentTypes[entryPoint]!.append(.buffer)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .buffer
 
                 case function_argument_pod:
-                    functionArgumentTypes[entryPoint]!.append(.constant)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .constant
 
                 case function_argument_pod_push_constant:
-                    functionArgumentTypes[entryPoint]!.append(.constant)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .constant
 
                 case function_argument_pod_ubo:
-                    functionArgumentTypes[entryPoint]!.append(.buffer)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .buffer
 
                 case function_argument_sampler:
-                    functionArgumentTypes[entryPoint]!.append(.sampler)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .sampler
 
                 case function_argument_unknown:
-                    functionArgumentTypes[entryPoint]!.append(.unknown)
+                    functionArgumentTypes[entryPoint]![_functionArgumentType.index] = .unknown
 
                 default:
                     preconditionFailure()
