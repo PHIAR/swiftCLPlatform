@@ -41,7 +41,8 @@ internal final class Platform: MetalPlatform {
                                   paramValue: UnsafeMutableRawPointer?,
                                   paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
         switch Int32(paramName) {
-        case CL_PLATFORM_NAME,
+        case CL_PLATFORM_EXTENSIONS,
+             CL_PLATFORM_NAME,
              CL_PLATFORM_PROFILE,
              CL_PLATFORM_VENDOR,
              CL_PLATFORM_VERSION:
