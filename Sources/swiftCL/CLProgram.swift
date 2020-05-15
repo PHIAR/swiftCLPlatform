@@ -106,10 +106,38 @@ public func clGetProgramBuildInfo(program: cl_program,
 public func clGetProgramInfo(program: cl_program,
                              param_name: cl_program_info,
                              param_value_size: size_t,
-                             param_value: UnsafeMutableRawPointer,
+                             param_value: UnsafeMutableRawPointer?,
                              param_value_size_ret: UnsafeMutablePointer <size_t>?) -> cl_int {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(program: \(program))")
+        print("\(#function)(program: \(program) param_name: \(param_name) param_value_size: \(param_value_size))")
+    }
+
+    switch param_name {
+    case cl_program_info(CL_PROGRAM_BINARIES):
+        precondition(param_value_size > 0)
+
+        if let _param_value = param_value {
+            memset(_param_value, 0, param_value_size)
+        }
+
+        param_value_size_ret?.pointee = param_value_size
+
+    case cl_program_info(CL_PROGRAM_BINARY_SIZES):
+        param_value_size_ret?.pointee = MemoryLayout <UInt32>.size
+
+        switch param_value_size {
+        case MemoryLayout <UInt32>.size:
+            param_value?.assumingMemoryBound(to: UInt32.self).pointee = 1
+
+        case MemoryLayout <UInt64>.size:
+            param_value?.assumingMemoryBound(to: UInt64.self).pointee = 1
+
+        default:
+            preconditionFailure("Unknown parameter value size: \(param_value_size).")
+        }
+
+    default:
+        preconditionFailure(String(format: "Unknown parameter: 0x%04x", param_name))
     }
 
     return CL_SUCCESS
