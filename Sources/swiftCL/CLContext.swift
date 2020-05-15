@@ -133,8 +133,10 @@ public func clCreateContextFromType(_ properties: UnsafePointer <cl_context_prop
         print("\(#function)(properties: \(properties), device_type: \(device_type), pfn_notify: \(String(describing: pfn_notify)), user_data: \(user_data))")
     }
 
-    guard device_type == CL_DEVICE_TYPE_GPU else {
-        errcode_ret?.pointee = CL_INVALID_PROPERTY
+    guard (device_type == CL_DEVICE_TYPE_ALL) ||
+          (device_type == CL_DEVICE_TYPE_DEFAULT) ||
+          (device_type == CL_DEVICE_TYPE_GPU) else {
+        errcode_ret?.pointee = CL_DEVICE_NOT_FOUND
         return nil
     }
 
