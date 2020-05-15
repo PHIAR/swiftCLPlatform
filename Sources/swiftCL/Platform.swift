@@ -50,10 +50,10 @@ internal final class Platform: MetalPlatform {
              CL_PLATFORM_VERSION:
             let stringValue = self.paramValues[paramName] as! String
 
-            paramValueSizeRet?.pointee = stringValue.count + 1
+            paramValueSizeRet?.pointee = stringValue.count
 
             if let pointer = paramValue?.assumingMemoryBound(to: CChar.self) {
-                let _ = stringValue.withCString { strcpy(pointer, $0) }
+                let _ = stringValue.withCString { memcpy(pointer, $0) }
             }
 
         default:
