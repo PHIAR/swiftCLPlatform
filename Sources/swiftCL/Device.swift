@@ -210,7 +210,7 @@ internal final class Device: MetalDevice {
             paramValueSizeRet?.pointee = stringValue.count
 
             if let pointer = paramValue?.assumingMemoryBound(to: CChar.self) {
-                let _ = stringValue.withCString { memcpy(pointer, $0) }
+                let _ = stringValue.withCString { memcpy(pointer, $0, stringValue.count) }
             }
 
         case CL_DEVICE_PLATFORM:

@@ -112,25 +112,36 @@ public func clGetProgramInfo(program: cl_program,
         print("\(#function)(program: \(program) param_name: \(param_name) param_value_size: \(param_value_size))")
     }
 
+    let _program = program.toMetalProgram()
+
     switch param_name {
     case cl_program_info(CL_PROGRAM_BINARIES):
         precondition(param_value_size > 0)
 
-        if let _param_value = param_value {
-            memset(_param_value, 0, param_value_size)
+        let data = _program.getData()
+
+        if let _param_value = param_value,
+           let _data = data {
+            precondition(_data.count == param_value_size)
+
+            let _ = _data.withUnsafeBytes {
+                memcpy(_param_value, $0.baseAddress!, param_value_size)
+            }
         }
 
         param_value_size_ret?.pointee = param_value_size
 
     case cl_program_info(CL_PROGRAM_BINARY_SIZES):
+        let size = _program.getData()?.count ?? 1
+
         param_value_size_ret?.pointee = MemoryLayout <UInt32>.size
 
         switch param_value_size {
         case MemoryLayout <UInt32>.size:
-            param_value?.assumingMemoryBound(to: UInt32.self).pointee = 1
+            param_value?.assumingMemoryBound(to: UInt32.self).pointee = UInt32(size)
 
         case MemoryLayout <UInt64>.size:
-            param_value?.assumingMemoryBound(to: UInt64.self).pointee = 1
+            param_value?.assumingMemoryBound(to: UInt64.self).pointee = UInt64(size)
 
         default:
             preconditionFailure("Unknown parameter value size: \(param_value_size).")

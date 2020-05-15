@@ -17,7 +17,8 @@ internal final class Platform: MetalPlatform {
 
     internal static let extensions = "cl_khr_byte_addressable_store " +
                                      "cl_khr_create_command_queue" +
-                                     "cl_khr_fp16"
+                                     "cl_khr_fp16 " +
+                                     "cl_khr_il_program"
     internal static let version = "OpenCL 2.0"
 
     internal static let allPlatforms = [
@@ -53,7 +54,7 @@ internal final class Platform: MetalPlatform {
             paramValueSizeRet?.pointee = stringValue.count
 
             if let pointer = paramValue?.assumingMemoryBound(to: CChar.self) {
-                let _ = stringValue.withCString { memcpy(pointer, $0) }
+                let _ = stringValue.withCString { memcpy(pointer, $0, stringValue.count) }
             }
 
         default:
