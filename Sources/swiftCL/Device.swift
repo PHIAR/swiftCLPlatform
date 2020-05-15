@@ -4,22 +4,22 @@ import Foundation
 import Metal
 
 internal final class Device: MetalDevice {
-    private static let driverVersion = "2.0"
+    private static let driverVersion = "2.0.0"
 
     private final weak var platform: Platform? = nil
 
     internal lazy var paramValues: [cl_device_info: Any] = [
-        cl_device_info(CL_DEVICE_ADDRESS_BITS): UInt32(32),
+        cl_device_info(CL_DEVICE_ADDRESS_BITS): UInt32(64),
         cl_device_info(CL_DEVICE_AVAILABLE): cl_bool(CL_TRUE),
         cl_device_info(CL_DEVICE_BUILT_IN_KERNELS): "",
         cl_device_info(CL_DEVICE_COMPILER_AVAILABLE): cl_bool(CL_TRUE),
         cl_device_info(CL_DEVICE_DOUBLE_FP_CONFIG): UInt64(cl_device_fp_config()),
         cl_device_info(CL_DEVICE_ENDIAN_LITTLE): cl_bool(CL_TRUE),
         cl_device_info(CL_DEVICE_ERROR_CORRECTION_SUPPORT): cl_bool(CL_FALSE),
-        cl_device_info(CL_DEVICE_EXECUTION_CAPABILITIES): UInt32(cl_device_exec_capabilities(CL_EXEC_KERNEL)),
+        cl_device_info(CL_DEVICE_EXECUTION_CAPABILITIES): UInt64(cl_device_exec_capabilities(CL_EXEC_KERNEL)),
         cl_device_info(CL_DEVICE_EXTENSIONS): Platform.extensions,
         cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_SIZE): UInt64(),
-        cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE): cl_device_mem_cache_type(),
+        cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE): UInt64(cl_device_mem_cache_type()),
         cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE): MemoryLayout <UInt32>.size,
         cl_device_info(CL_DEVICE_GLOBAL_MEM_SIZE): UInt64(Device.globalMemorySize),
         cl_device_info(CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE): UInt32(4),
@@ -92,7 +92,7 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_SINGLE_FP_CONFIG): UInt64(cl_device_fp_config(CL_FP_ROUND_TO_NEAREST |
                                                                                CL_FP_INF_NAN)),
         cl_device_info(CL_DEVICE_SVM_CAPABILITIES): UInt32(CL_DEVICE_SVM_FINE_GRAIN_BUFFER),
-        cl_device_info(CL_DEVICE_TYPE): UInt32(CL_DEVICE_TYPE_GPU),
+        cl_device_info(CL_DEVICE_TYPE): UInt64(CL_DEVICE_TYPE_GPU),
         cl_device_info(CL_DEVICE_VENDOR): "swiftCL",
         cl_device_info(CL_DEVICE_VENDOR_ID): UInt32(0x00000000),
         cl_device_info(CL_DEVICE_VERSION): Platform.version,
@@ -109,8 +109,6 @@ internal final class Device: MetalDevice {
                                 paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
         switch Int32(paramName) {
         case CL_DEVICE_ADDRESS_BITS,
-             CL_DEVICE_EXECUTION_CAPABILITIES,
-             CL_DEVICE_GLOBAL_MEM_CACHE_TYPE,
              CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE,
              CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE,
              CL_DEVICE_MAX_CLOCK_FREQUENCY,
@@ -153,7 +151,6 @@ internal final class Device: MetalDevice {
              CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES,
              CL_DEVICE_QUEUE_ON_HOST_PROPERTIES,
              CL_DEVICE_SVM_CAPABILITIES,
-             CL_DEVICE_TYPE,
              CL_DEVICE_VENDOR_ID:
             paramValueSizeRet?.pointee = MemoryLayout <UInt32>.size
             paramValue?.assumingMemoryBound(to: UInt32.self).pointee = self.paramValues[paramName] as! UInt32
@@ -170,9 +167,11 @@ internal final class Device: MetalDevice {
             paramValue?.assumingMemoryBound(to: cl_bool.self).pointee = self.paramValues[paramName] as! cl_bool
 
         case CL_DEVICE_DOUBLE_FP_CONFIG,
+             CL_DEVICE_EXECUTION_CAPABILITIES,
              CL_DEVICE_LOCAL_MEM_SIZE,
              CL_DEVICE_LOCAL_MEM_TYPE,
              CL_DEVICE_GLOBAL_MEM_CACHE_SIZE,
+             CL_DEVICE_GLOBAL_MEM_CACHE_TYPE,
              CL_DEVICE_GLOBAL_MEM_SIZE,
              CL_DEVICE_HALF_FP_CONFIG,
              CL_DEVICE_IMAGE_MAX_ARRAY_SIZE,
@@ -189,7 +188,8 @@ internal final class Device: MetalDevice {
              CL_DEVICE_PARTITION_PROPERTIES,
              CL_DEVICE_PRINTF_BUFFER_SIZE,
              CL_DEVICE_PROFILING_TIMER_RESOLUTION,
-             CL_DEVICE_SINGLE_FP_CONFIG:
+             CL_DEVICE_SINGLE_FP_CONFIG,
+             CL_DEVICE_TYPE:
             paramValueSizeRet?.pointee = MemoryLayout <UInt64>.size
             paramValue?.assumingMemoryBound(to: UInt64.self).pointee = self.paramValues[paramName] as! UInt64
 
