@@ -17,7 +17,7 @@ internal class Program: MetalProgram {
             kernel = cachedKernel.clone()
         } else {
             guard let _kernel = Kernel(metalProgram: self,
-                                      name: name) else {
+                                       name: name) else {
                 return nil
             }
 
