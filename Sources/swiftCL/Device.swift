@@ -20,15 +20,17 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_EXTENSIONS): Platform.extensions,
         cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_SIZE): UInt64(),
         cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE): UInt32(cl_device_mem_cache_type()),
-        cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE): MemoryLayout <UInt32>.size,
+        cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE): UInt32(1024),
         cl_device_info(CL_DEVICE_GLOBAL_MEM_SIZE): UInt64(Device.globalMemorySize),
         cl_device_info(CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE): UInt64(4),
         cl_device_info(CL_DEVICE_HALF_FP_CONFIG): UInt64(cl_device_fp_config(CL_FP_ROUND_TO_NEAREST |
                                                                              CL_FP_INF_NAN)),
         cl_device_info(CL_DEVICE_HOST_UNIFIED_MEMORY): cl_bool(CL_TRUE),
         cl_device_info(CL_DEVICE_IL_VERSION): "swiftCL_1_0",
+        cl_device_info(CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT): UInt32(4),
         cl_device_info(CL_DEVICE_IMAGE_MAX_ARRAY_SIZE): UInt64(self.device.maxBufferLength),
         cl_device_info(CL_DEVICE_IMAGE_MAX_BUFFER_SIZE): UInt64(self.device.maxBufferLength),
+        cl_device_info(CL_DEVICE_IMAGE_PITCH_ALIGNMENT): UInt32(4),
         cl_device_info(CL_DEVICE_IMAGE_SUPPORT): cl_bool(CL_TRUE),
         cl_device_info(CL_DEVICE_IMAGE2D_MAX_HEIGHT): UInt64(2048),
         cl_device_info(CL_DEVICE_IMAGE2D_MAX_WIDTH): UInt64(2048),
@@ -86,13 +88,14 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_PRINTF_BUFFER_SIZE): UInt64(0),
         cl_device_info(CL_DEVICE_PROFILE): "EMBEDDED_PROFILE",
         cl_device_info(CL_DEVICE_PROFILING_TIMER_RESOLUTION): UInt64(1000),
-        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE): UInt64(65536),
-        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE): UInt64(65536),
+        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE): UInt32(65536),
+        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE): UInt32(65536),
         cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES): UInt64(0),
         cl_device_info(CL_DEVICE_QUEUE_ON_HOST_PROPERTIES): UInt64(cl_command_queue_properties()),
         cl_device_info(CL_DEVICE_SINGLE_FP_CONFIG): UInt64(cl_device_fp_config(CL_FP_ROUND_TO_NEAREST |
                                                                                CL_FP_INF_NAN)),
-        cl_device_info(CL_DEVICE_SVM_CAPABILITIES): UInt64(cl_device_svm_capabilities(CL_DEVICE_SVM_FINE_GRAIN_BUFFER)),
+        cl_device_info(CL_DEVICE_SVM_CAPABILITIES): UInt64(cl_device_svm_capabilities(CL_DEVICE_SVM_ATOMICS |
+                                                                                      CL_DEVICE_SVM_FINE_GRAIN_BUFFER)),
         cl_device_info(CL_DEVICE_TYPE): UInt64(CL_DEVICE_TYPE_GPU),
         cl_device_info(CL_DEVICE_VENDOR): "swiftCL",
         cl_device_info(CL_DEVICE_VENDOR_ID): UInt32(0x00000000),
@@ -113,6 +116,8 @@ internal final class Device: MetalDevice {
              CL_DEVICE_GLOBAL_MEM_CACHE_TYPE,
              CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE,
              CL_DEVICE_LOCAL_MEM_TYPE,
+             CL_DEVICE_IMAGE_BASE_ADDRESS_ALIGNMENT,
+             CL_DEVICE_IMAGE_PITCH_ALIGNMENT,
              CL_DEVICE_MAX_CLOCK_FREQUENCY,
              CL_DEVICE_MAX_COMPUTE_UNITS,
              CL_DEVICE_MAX_CONSTANT_ARGS,
@@ -146,10 +151,18 @@ internal final class Device: MetalDevice {
              CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT,
              CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG,
              CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT,
+             CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE,
+             CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE,
              CL_DEVICE_VENDOR_ID:
-            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <UInt32>.size))
-            paramValueSizeRet?.pointee = MemoryLayout <UInt32>.size
-            paramValue?.assumingMemoryBound(to: UInt32.self).pointee = self.paramValues[paramName] as! UInt32
+            let size = MemoryLayout <UInt32>.size
+
+            if let _paramValue = paramValue {
+                var value = self.paramValues[paramName] as! UInt32
+
+                memcpy(_paramValue, &value, min(size, paramValueSize))
+            }
+
+            paramValueSizeRet?.pointee = size
 
         case CL_DEVICE_AVAILABLE,
              CL_DEVICE_COMPILER_AVAILABLE,
@@ -186,16 +199,20 @@ internal final class Device: MetalDevice {
              CL_DEVICE_PARTITION_PROPERTIES,
              CL_DEVICE_PRINTF_BUFFER_SIZE,
              CL_DEVICE_PROFILING_TIMER_RESOLUTION,
-             CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE,
-             CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE,
              CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES,
              CL_DEVICE_QUEUE_ON_HOST_PROPERTIES,
              CL_DEVICE_SINGLE_FP_CONFIG,
              CL_DEVICE_SVM_CAPABILITIES,
              CL_DEVICE_TYPE:
-            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <UInt64>.size))
-            paramValueSizeRet?.pointee = MemoryLayout <UInt64>.size
-            paramValue?.assumingMemoryBound(to: UInt64.self).pointee = self.paramValues[paramName] as! UInt64
+            let size = MemoryLayout <UInt64>.size
+
+            if let _paramValue = paramValue {
+                var value = self.paramValues[paramName] as! UInt64
+
+                memcpy(_paramValue, &value, min(size, paramValueSize))
+            }
+
+            paramValueSizeRet?.pointee = size
 
         case CL_DEVICE_MAX_WORK_ITEM_SIZES:
             precondition((paramValue == nil) || (paramValueSize == MemoryLayout <(Int, Int, Int)>.size))
@@ -220,6 +237,12 @@ internal final class Device: MetalDevice {
                 let _ = stringValue.withCString { strcpy(pointer, $0) }
             }
 
+        case CL_DEVICE_PARENT_DEVICE:
+            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <cl_device_id?>.size))
+
+            paramValueSizeRet?.pointee = MemoryLayout <cl_device_id?>.size
+            paramValue?.assumingMemoryBound(to: cl_device_id?.self).pointee = nil
+
         case CL_DEVICE_PLATFORM:
             precondition((paramValue == nil) || (paramValueSize == MemoryLayout <cl_platform_id>.size))
 
@@ -227,6 +250,17 @@ internal final class Device: MetalDevice {
 
             paramValueSizeRet?.pointee = MemoryLayout <cl_platform_id>.size
             paramValue?.assumingMemoryBound(to: cl_platform_id.self).pointee = platform
+
+        case CL_DEVICE_REFERENCE_COUNT:
+            let size = MemoryLayout <UInt32>.size
+
+            if let _paramValue = paramValue {
+                var value = UInt32(1)
+
+                memcpy(_paramValue, &value, min(size, paramValueSize))
+            }
+
+            paramValueSizeRet?.pointee = size
 
         default:
             print(String(format: "\(#function)(device: \(device), paramName: 0x%04x, paramValueSize: \(paramValueSize), paramValue: \(String(describing: paramValue)), paramValueSizeRet: \(String(describing: paramValueSizeRet)))", paramName))
