@@ -66,7 +66,7 @@ internal final class CompilerSession: MetalCompilerSession {
     internal init?(source: String,
                    options: String) {
         let _source = CompilerSession.shaderPreamble + source
-        let _options = "--pod-pushconstant -w -O=3 \(options)"
+        let _options = "--keep-unused-arguments --pod-pushconstant -w -O=3 \(options)"
         let (spirv: spirv,
              functionArgumentTypes: functionArgumentTypes): (spirv: [UInt32],
                                                              functionArgumentTypes: [String: FunctionArgumentTypes]) = _source.withCString { _metalSource in
