@@ -59,14 +59,16 @@ internal final class Image: MetalTexture {
             cl_channel_order(CL_BGRA): [
                 cl_channel_type(CL_UNORM_INT8): .bgra8Unorm,
             ],
+            cl_channel_order(CL_RGBA): [
+                cl_channel_type(CL_SIGNED_INT32): .rgba32Sint,
+                cl_channel_type(CL_UNORM_INT8): .rgba8Unorm,
+                cl_channel_type(CL_UNSIGNED_INT32): .rgba32Uint,
+            ],
         ]
 
-        guard let pixelFormats = pixelFormatsForImageFormat[imageFormat.image_channel_order] else {
-            return nil
-        }
-
-        guard let pixelFormat = pixelFormats[imageFormat.image_channel_data_type] else {
-            return nil
+        guard let pixelFormats = pixelFormatsForImageFormat[imageFormat.image_channel_order],
+              let pixelFormat = pixelFormats[imageFormat.image_channel_data_type] else {
+            preconditionFailure(String(format: "0x%04x 0x%04x", imageFormat.image_channel_order, imageFormat.image_channel_data_type))
         }
 
         descriptor.textureType = textureType
