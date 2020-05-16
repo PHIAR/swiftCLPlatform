@@ -105,8 +105,28 @@ public func clGetProgramBuildInfo(program: cl_program,
     case cl_program_build_info(CL_PROGRAM_BUILD_LOG):
         param_value_size_ret?.pointee = 0
 
+    case cl_program_info(CL_PROGRAM_BUILD_OPTIONS):
+        if let sourceProgram = _program as? SourceProgram {
+            let options = sourceProgram.getOptions()
+            let size = options.count
+
+            if let _param_value = param_value {
+                let _ = options.withCString {
+                    precondition(size <= param_value_size)
+
+                    strcpy(_param_value.assumingMemoryBound(to: CChar.self), $0)
+                }
+            }
+
+            param_value_size_ret?.pointee = size + 1
+        } else {
+            param_value_size_ret?.pointee = 0
+        }
+
     case cl_program_info(CL_PROGRAM_BUILD_STATUS):
-        param_value?.assumingMemoryBound(to: cl_build_status.self).pointee = cl_build_status(CL_BUILD_SUCCESS)
+        let buildSucceeded = _program.library != nil
+
+        param_value?.assumingMemoryBound(to: cl_build_status.self).pointee = cl_build_status(buildSucceeded ? CL_BUILD_SUCCESS : CL_BUILD_ERROR)
         param_value_size_ret?.pointee = MemoryLayout <cl_build_status>.size
 
     default:
@@ -159,6 +179,52 @@ public func clGetProgramInfo(program: cl_program,
 
         default:
             preconditionFailure("Unknown parameter value size: \(param_value_size).")
+        }
+
+    case cl_program_info(CL_PROGRAM_CONTEXT):
+        let context = (_program.metalContext as! Context).toCLContext()
+
+        param_value_size_ret?.pointee = MemoryLayout <UnsafeMutablePointer <cl_context?>>.size
+        param_value?.assumingMemoryBound(to: cl_context?.self)[0] = context
+
+    case cl_program_info(CL_PROGRAM_DEVICES):
+        let device = (_program.metalContext.metalDevice as! Device).toCLDevice()
+
+        param_value_size_ret?.pointee = MemoryLayout <UnsafeMutablePointer <cl_device_id?>>.size
+        param_value?.assumingMemoryBound(to: cl_device_id?.self)[0] = device
+
+    case cl_program_info(CL_PROGRAM_NUM_DEVICES):
+        precondition((param_value == nil) || (param_value_size == MemoryLayout <UInt32>.size))
+        param_value_size_ret?.pointee = MemoryLayout <UInt32>.size
+        param_value?.assumingMemoryBound(to: UInt32.self).pointee = 1
+
+    case cl_program_info(CL_PROGRAM_REFERENCE_COUNT):
+        let size = MemoryLayout <UInt32>.size
+
+        if let _param_value = param_value {
+            var value = UInt32(1)
+
+            memcpy(_param_value, &value, min(size, param_value_size))
+        }
+
+        param_value_size_ret?.pointee = size
+
+    case cl_program_info(CL_PROGRAM_SOURCE):
+        if let sourceProgram = _program as? SourceProgram {
+            let source = sourceProgram.getSource()
+            let size = source.count
+
+            if let _param_value = param_value {
+                let _ = source.withCString {
+                    precondition(size <= param_value_size)
+
+                    strcpy(_param_value.assumingMemoryBound(to: CChar.self), $0)
+                }
+            }
+
+            param_value_size_ret?.pointee = size + 1
+        } else {
+            param_value_size_ret?.pointee = 0
         }
 
     default:

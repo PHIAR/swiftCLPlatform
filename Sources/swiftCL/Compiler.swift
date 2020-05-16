@@ -71,12 +71,19 @@ internal final class CompilerSession: MetalCompilerSession {
              functionArgumentTypes: functionArgumentTypes): (spirv: [UInt32],
                                                              functionArgumentTypes: [String: FunctionArgumentTypes]) = _source.withCString { _metalSource in
             var byteCode = byte_code_t()
-
-            _options.withCString { _options in
+            let compileSuccess: Bool = _options.withCString { _options in
                 let compileSuccess = clspvBuildProgram(CompilerSession.clspvLibrary, _metalSource, _options, &byteCode)
 
-                precondition(compileSuccess, "options:\n\(options)\nsource:\n\(source)\nbyteCode:\(byteCode)\n")
-                precondition(byteCode.length > 0)
+                if SWIFTCL_ENABLE_CONSOLE_LOG {
+                    print(compileSuccess, "options:\n\(options)\nsource:\n\(source)\nbyteCode:\(byteCode)\n")
+                }
+
+                return compileSuccess
+            }
+
+            guard compileSuccess else {
+                return (spirv: [],
+                        functionArgumentTypes: [:])
             }
 
             let spirv = Array(UnsafeBufferPointer(start: byteCode.code,
@@ -150,6 +157,10 @@ internal final class CompilerSession: MetalCompilerSession {
             clspvDestroyByteCode(&byteCode)
             return (spirv: spirv,
                     functionArgumentTypes: functionArgumentTypes)
+        }
+
+        guard !spirv.isEmpty else {
+            return nil
         }
 
         self.spirv = spirv

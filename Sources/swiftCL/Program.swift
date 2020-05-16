@@ -48,6 +48,7 @@ internal final class ILProgram: Program {
 internal final class SourceProgram: Program {
     private let metalCompiler: Compiler
     private let source: String
+    private var options = ""
 
     internal init?(metalContext: Context,
                    metalCompiler: Compiler,
@@ -57,6 +58,14 @@ internal final class SourceProgram: Program {
         self.metalCompiler = metalCompiler
         self.source = source
         super.init(metalContext: metalContext)
+    }
+
+    internal func getOptions() -> String {
+        return self.options
+    }
+
+    internal func getSource() -> String {
+        return self.source
     }
 
     public override func buildProgram(options: String? = nil) -> Bool {
@@ -71,6 +80,7 @@ internal final class SourceProgram: Program {
         }
 
         self.library = library
+        self.options = _options
         return true
     }
 }
