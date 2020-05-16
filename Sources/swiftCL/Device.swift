@@ -19,13 +19,14 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_EXECUTION_CAPABILITIES): UInt64(cl_device_exec_capabilities(CL_EXEC_KERNEL)),
         cl_device_info(CL_DEVICE_EXTENSIONS): Platform.extensions,
         cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_SIZE): UInt64(),
-        cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE): UInt64(cl_device_mem_cache_type()),
+        cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE): UInt32(cl_device_mem_cache_type()),
         cl_device_info(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE): MemoryLayout <UInt32>.size,
         cl_device_info(CL_DEVICE_GLOBAL_MEM_SIZE): UInt64(Device.globalMemorySize),
-        cl_device_info(CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE): UInt32(4),
+        cl_device_info(CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE): UInt64(4),
         cl_device_info(CL_DEVICE_HALF_FP_CONFIG): UInt64(cl_device_fp_config(CL_FP_ROUND_TO_NEAREST |
                                                                              CL_FP_INF_NAN)),
         cl_device_info(CL_DEVICE_HOST_UNIFIED_MEMORY): cl_bool(CL_TRUE),
+        cl_device_info(CL_DEVICE_IL_VERSION): "swiftCL_1_0",
         cl_device_info(CL_DEVICE_IMAGE_MAX_ARRAY_SIZE): UInt64(self.device.maxBufferLength),
         cl_device_info(CL_DEVICE_IMAGE_MAX_BUFFER_SIZE): UInt64(self.device.maxBufferLength),
         cl_device_info(CL_DEVICE_IMAGE_SUPPORT): cl_bool(CL_TRUE),
@@ -36,12 +37,12 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_IMAGE3D_MAX_WIDTH): UInt64(512),
         cl_device_info(CL_DEVICE_LINKER_AVAILABLE): cl_bool(CL_TRUE),
         cl_device_info(CL_DEVICE_LOCAL_MEM_SIZE): UInt64(self.device.maxThreadgroupMemoryLength),
-        cl_device_info(CL_DEVICE_LOCAL_MEM_TYPE): UInt64(cl_device_local_mem_type(CL_LOCAL)),
+        cl_device_info(CL_DEVICE_LOCAL_MEM_TYPE): UInt32(cl_device_local_mem_type(CL_LOCAL)),
         cl_device_info(CL_DEVICE_MAX_CLOCK_FREQUENCY): UInt32(800),
         cl_device_info(CL_DEVICE_MAX_COMPUTE_UNITS): UInt32(32),
         cl_device_info(CL_DEVICE_MAX_CONSTANT_ARGS): UInt32(16),
         cl_device_info(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE): UInt64(self.device.maxBufferLength),
-        cl_device_info(CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE): UInt32(64),
+        cl_device_info(CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE): UInt64(64),
         cl_device_info(CL_DEVICE_MAX_MEM_ALLOC_SIZE): UInt64(Device.globalMemorySize),
         cl_device_info(CL_DEVICE_MAX_ON_DEVICE_EVENTS): UInt32(1024),
         cl_device_info(CL_DEVICE_MAX_ON_DEVICE_QUEUES): UInt32(1),
@@ -57,7 +58,7 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_MEM_BASE_ADDR_ALIGN): UInt32(16),
         cl_device_info(CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE): UInt32(4),
         cl_device_info(CL_DEVICE_NAME): "swiftCL",
-        cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR): UInt32(4),
+        cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_CHAR): UInt32(1),
         cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE): UInt32(0),
         cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_FLOAT): UInt32(1),
         cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF): UInt32(1),
@@ -65,7 +66,7 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG): UInt32(1),
         cl_device_info(CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT): UInt32(1),
         cl_device_info(CL_DEVICE_OPENCL_C_VERSION): "OpenCL 1.2",
-        cl_device_info(CL_DEVICE_PARTITION_AFFINITY_DOMAIN): UInt32(0),
+        cl_device_info(CL_DEVICE_PARTITION_AFFINITY_DOMAIN): UInt64(0),
         cl_device_info(CL_DEVICE_PARTITION_PROPERTIES): UInt64(cl_device_partition_property(0)),
         cl_device_info(CL_DEVICE_PARTITION_MAX_SUB_DEVICES): UInt32(0),
         cl_device_info(CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS): UInt32(0),
@@ -75,7 +76,7 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_PREFERRED_GLOBAL_ATOMIC_ALIGNMENT): UInt32(4),
         cl_device_info(CL_DEVICE_PREFERRED_INTEROP_USER_SYNC): cl_bool(CL_FALSE),
         cl_device_info(CL_DEVICE_PREFERRED_PLATFORM_ATOMIC_ALIGNMENT): UInt32(4),
-        cl_device_info(CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR): UInt32(4),
+        cl_device_info(CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR): UInt32(1),
         cl_device_info(CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE): UInt32(0),
         cl_device_info(CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT): UInt32(1),
         cl_device_info(CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF): UInt32(1),
@@ -85,13 +86,13 @@ internal final class Device: MetalDevice {
         cl_device_info(CL_DEVICE_PRINTF_BUFFER_SIZE): UInt64(0),
         cl_device_info(CL_DEVICE_PROFILE): "EMBEDDED_PROFILE",
         cl_device_info(CL_DEVICE_PROFILING_TIMER_RESOLUTION): UInt64(1000),
-        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE): UInt32(65536),
-        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE): UInt32(65536),
-        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES): UInt32(0),
-        cl_device_info(CL_DEVICE_QUEUE_ON_HOST_PROPERTIES): UInt32(cl_command_queue_properties()),
+        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE): UInt64(65536),
+        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE): UInt64(65536),
+        cl_device_info(CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES): UInt64(0),
+        cl_device_info(CL_DEVICE_QUEUE_ON_HOST_PROPERTIES): UInt64(cl_command_queue_properties()),
         cl_device_info(CL_DEVICE_SINGLE_FP_CONFIG): UInt64(cl_device_fp_config(CL_FP_ROUND_TO_NEAREST |
                                                                                CL_FP_INF_NAN)),
-        cl_device_info(CL_DEVICE_SVM_CAPABILITIES): UInt32(CL_DEVICE_SVM_FINE_GRAIN_BUFFER),
+        cl_device_info(CL_DEVICE_SVM_CAPABILITIES): UInt64(cl_device_svm_capabilities(CL_DEVICE_SVM_FINE_GRAIN_BUFFER)),
         cl_device_info(CL_DEVICE_TYPE): UInt64(CL_DEVICE_TYPE_GPU),
         cl_device_info(CL_DEVICE_VENDOR): "swiftCL",
         cl_device_info(CL_DEVICE_VENDOR_ID): UInt32(0x00000000),
@@ -109,12 +110,12 @@ internal final class Device: MetalDevice {
                                 paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
         switch Int32(paramName) {
         case CL_DEVICE_ADDRESS_BITS,
+             CL_DEVICE_GLOBAL_MEM_CACHE_TYPE,
              CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE,
-             CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE,
+             CL_DEVICE_LOCAL_MEM_TYPE,
              CL_DEVICE_MAX_CLOCK_FREQUENCY,
              CL_DEVICE_MAX_COMPUTE_UNITS,
              CL_DEVICE_MAX_CONSTANT_ARGS,
-             CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE,
              CL_DEVICE_MAX_ON_DEVICE_EVENTS,
              CL_DEVICE_MAX_ON_DEVICE_QUEUES,
              CL_DEVICE_MAX_PIPE_ARGS,
@@ -132,7 +133,6 @@ internal final class Device: MetalDevice {
              CL_DEVICE_NATIVE_VECTOR_WIDTH_INT,
              CL_DEVICE_NATIVE_VECTOR_WIDTH_LONG,
              CL_DEVICE_NATIVE_VECTOR_WIDTH_SHORT,
-             CL_DEVICE_PARTITION_AFFINITY_DOMAIN,
              CL_DEVICE_PARTITION_MAX_SUB_DEVICES,
              CL_DEVICE_PIPE_MAX_ACTIVE_RESERVATIONS,
              CL_DEVICE_PIPE_MAX_PACKET_SIZE,
@@ -146,12 +146,8 @@ internal final class Device: MetalDevice {
              CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT,
              CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG,
              CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT,
-             CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE,
-             CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE,
-             CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES,
-             CL_DEVICE_QUEUE_ON_HOST_PROPERTIES,
-             CL_DEVICE_SVM_CAPABILITIES,
              CL_DEVICE_VENDOR_ID:
+            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <UInt32>.size))
             paramValueSizeRet?.pointee = MemoryLayout <UInt32>.size
             paramValue?.assumingMemoryBound(to: UInt32.self).pointee = self.paramValues[paramName] as! UInt32
 
@@ -163,16 +159,16 @@ internal final class Device: MetalDevice {
              CL_DEVICE_IMAGE_SUPPORT,
              CL_DEVICE_LINKER_AVAILABLE,
              CL_DEVICE_PREFERRED_INTEROP_USER_SYNC:
+            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <cl_bool>.size))
             paramValueSizeRet?.pointee = MemoryLayout <cl_bool>.size
             paramValue?.assumingMemoryBound(to: cl_bool.self).pointee = self.paramValues[paramName] as! cl_bool
 
         case CL_DEVICE_DOUBLE_FP_CONFIG,
              CL_DEVICE_EXECUTION_CAPABILITIES,
              CL_DEVICE_LOCAL_MEM_SIZE,
-             CL_DEVICE_LOCAL_MEM_TYPE,
              CL_DEVICE_GLOBAL_MEM_CACHE_SIZE,
-             CL_DEVICE_GLOBAL_MEM_CACHE_TYPE,
              CL_DEVICE_GLOBAL_MEM_SIZE,
+             CL_DEVICE_GLOBAL_VARIABLE_PREFERRED_TOTAL_SIZE,
              CL_DEVICE_HALF_FP_CONFIG,
              CL_DEVICE_IMAGE_MAX_ARRAY_SIZE,
              CL_DEVICE_IMAGE_MAX_BUFFER_SIZE,
@@ -182,23 +178,33 @@ internal final class Device: MetalDevice {
              CL_DEVICE_IMAGE3D_MAX_HEIGHT,
              CL_DEVICE_IMAGE3D_MAX_WIDTH,
              CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,
+             CL_DEVICE_MAX_GLOBAL_VARIABLE_SIZE,
              CL_DEVICE_MAX_MEM_ALLOC_SIZE,
              CL_DEVICE_MAX_WORK_GROUP_SIZE,
              CL_DEVICE_MAX_PARAMETER_SIZE,
+             CL_DEVICE_PARTITION_AFFINITY_DOMAIN,
              CL_DEVICE_PARTITION_PROPERTIES,
              CL_DEVICE_PRINTF_BUFFER_SIZE,
              CL_DEVICE_PROFILING_TIMER_RESOLUTION,
+             CL_DEVICE_QUEUE_ON_DEVICE_MAX_SIZE,
+             CL_DEVICE_QUEUE_ON_DEVICE_PREFERRED_SIZE,
+             CL_DEVICE_QUEUE_ON_DEVICE_PROPERTIES,
+             CL_DEVICE_QUEUE_ON_HOST_PROPERTIES,
              CL_DEVICE_SINGLE_FP_CONFIG,
+             CL_DEVICE_SVM_CAPABILITIES,
              CL_DEVICE_TYPE:
+            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <UInt64>.size))
             paramValueSizeRet?.pointee = MemoryLayout <UInt64>.size
             paramValue?.assumingMemoryBound(to: UInt64.self).pointee = self.paramValues[paramName] as! UInt64
 
         case CL_DEVICE_MAX_WORK_ITEM_SIZES:
+            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <(Int, Int, Int)>.size))
             paramValueSizeRet?.pointee = MemoryLayout <(Int, Int, Int)>.size
             paramValue?.assumingMemoryBound(to: (Int, Int, Int).self).pointee = self.paramValues[paramName] as! (Int, Int, Int)
 
         case CL_DEVICE_BUILT_IN_KERNELS,
              CL_DEVICE_EXTENSIONS,
+             CL_DEVICE_IL_VERSION,
              CL_DEVICE_NAME,
              CL_DEVICE_OPENCL_C_VERSION,
              CL_DEVICE_PROFILE,
@@ -207,13 +213,16 @@ internal final class Device: MetalDevice {
              CL_DRIVER_VERSION:
             let stringValue = self.paramValues[paramName] as! String
 
-            paramValueSizeRet?.pointee = stringValue.count
+            precondition((paramValue == nil) || (paramValueSize >= (stringValue.count + 1)))
+            paramValueSizeRet?.pointee = stringValue.count + 1
 
             if let pointer = paramValue?.assumingMemoryBound(to: CChar.self) {
-                let _ = stringValue.withCString { memcpy(pointer, $0, stringValue.count) }
+                let _ = stringValue.withCString { strcpy(pointer, $0) }
             }
 
         case CL_DEVICE_PLATFORM:
+            precondition((paramValue == nil) || (paramValueSize == MemoryLayout <cl_platform_id>.size))
+
             let platform = cl_platform_id(UnsafeRawPointer(Unmanaged.passUnretained(self.platform!).toOpaque()))
 
             paramValueSizeRet?.pointee = MemoryLayout <cl_platform_id>.size
