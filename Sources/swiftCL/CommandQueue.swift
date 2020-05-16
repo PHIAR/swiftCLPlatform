@@ -47,11 +47,29 @@ internal final class CommandQueue: MetalCommandQueue {
                                         dstSlicePitch: size_t,
                                         eventWaitList: [MetalEvent]?,
                                         event: UnsafeMutablePointer <cl_event?>?) {
-        self.enqueueMetalComputeCommand(eventWaitList: eventWaitList,
-                                        event: event) { computeCommandEncoder in
+        self.enqueueMetalBlitCommand(eventWaitList: eventWaitList,
+                                     event: event) { blitCommandEncoder in
             if SWIFTCL_ENABLE_INSTRUMENTATION {
-                computeCommandEncoder.label = "clEnqueueCopyBufferRect"
+                blitCommandEncoder.label = "clEnqueueCopyBufferRect"
             }
+
+            let sourceOffset = srcOrigin[2] * srcSlicePitch + srcOrigin[1] * srcRowPitch + srcOrigin[0]
+            let destinationOffset = dstOrigin[2] * dstSlicePitch + dstOrigin[1] * dstRowPitch + dstOrigin[0]
+
+            for depth in 0..<region[2] {
+                for height in 0..<region[1] {
+                    let size = region[0]
+                    let _sourceOffset = sourceOffset + height * srcRowPitch + depth * srcSlicePitch
+                    let _destinationOffset = destinationOffset + height * dstRowPitch + depth * dstSlicePitch
+
+                    blitCommandEncoder.copy(from: sourceBuffer.buffer,
+                                            sourceOffset: _sourceOffset,
+                                            to: destinationBuffer.buffer,
+                                            destinationOffset: _destinationOffset,
+                                            size: size)
+                }
+            }
+
         }
     }
 
