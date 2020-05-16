@@ -43,12 +43,12 @@ internal final class Platform: MetalPlatform {
                                   paramValueSize: Int,
                                   paramValue: UnsafeMutableRawPointer?,
                                   paramValueSizeRet: UnsafeMutablePointer <size_t>?) -> Bool {
-        switch Int32(paramName) {
-        case CL_PLATFORM_EXTENSIONS,
-             CL_PLATFORM_NAME,
-             CL_PLATFORM_PROFILE,
-             CL_PLATFORM_VENDOR,
-             CL_PLATFORM_VERSION:
+        switch paramName {
+        case cl_platform_info(CL_PLATFORM_EXTENSIONS),
+             cl_platform_info(CL_PLATFORM_NAME),
+             cl_platform_info(CL_PLATFORM_PROFILE),
+             cl_platform_info(CL_PLATFORM_VENDOR),
+             cl_platform_info(CL_PLATFORM_VERSION):
             let stringValue = self.paramValues[paramName] as! String
 
             paramValueSizeRet?.pointee = stringValue.count + 1
