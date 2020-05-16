@@ -308,7 +308,19 @@ public func clCreateProgramWithBinary(_ context: cl_context,
         print("\(#function)(context: \(context), num_devices: \(num_devices), device_list: \(device_list), lengths: \(lengths), binaries: \(binaries), binary_status: \(String(describing: binary_status)))")
     }
 
-    return nil
+    precondition(num_devices == 1)
+
+    let _context = context.toContext()
+    let data = Data(bytes: binaries.pointee,
+                    count: lengths.pointee)
+
+    guard let program = _context.createProgramWithIL(data: data) else {
+        errcode_ret?.pointee = CL_INVALID_BINARY
+        return nil
+    }
+
+    errcode_ret?.pointee = CL_SUCCESS
+    return program.toCLProgram(retained: true)
 }
 
 @_cdecl("clCreateProgramWithBuiltInKernels")
@@ -335,9 +347,9 @@ public func clCreateProgramWithIL(_ context: cl_context,
 
     let _context = context.toContext()
 
-    guard let program = _context.createProgramWithIL(DispatchData(bytes: UnsafeRawBufferPointer(start: il,
-                                                                                                count: length))) else {
-        errcode_ret?.pointee = CL_INVALID_VALUE
+    guard let program = _context.createProgramWithIL(data: Data(bytes: il,
+                                                                count: length)) else {
+        errcode_ret?.pointee = CL_INVALID_BINARY
         return nil
     }
 

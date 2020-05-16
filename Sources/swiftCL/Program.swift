@@ -31,17 +31,17 @@ internal class Program: MetalProgram {
 
 internal final class ILProgram: Program {
     internal init?(metalContext: Context,
-                   data: DispatchData) {
-        let library: MTLLibrary
-
-        do {
-            library = try metalContext.metalDevice.device.makeLibrary(data: data as __DispatchData)
-        } catch {
+                   data: Data) {
+        guard let library = try? metalContext.metalDevice.device.makeLibrary(data: data) else {
             return nil
         }
 
         super.init(metalContext: metalContext,
                    library: library)
+    }
+
+    public override func buildProgram(options: String? = nil) -> Bool {
+        return true
     }
 }
 

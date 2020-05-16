@@ -55,7 +55,7 @@ internal final class Context: MetalContext {
         return program
     }
 
-    internal func createProgramWithIL(_ data: DispatchData) -> Program? {
+    internal func createProgramWithIL(data: Data) -> Program? {
         guard let program = ILProgram(metalContext: self,
                                       data: data) else {
             return nil

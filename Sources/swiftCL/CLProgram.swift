@@ -93,10 +93,24 @@ public func clGetProgramBuildInfo(program: cl_program,
                                   device: cl_device_id,
                                   param_name: cl_program_build_info,
                                   param_value_size: size_t,
-                                  param_value: UnsafeMutableRawPointer,
+                                  param_value: UnsafeMutableRawPointer?,
                                   param_value_size_ret: UnsafeMutablePointer <size_t>?) -> cl_int {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(program: \(program))")
+        print("\(#function)(program: \(program) param_name: \(param_name) param_value_size: \(param_value_size) param_value: \(String(describing: param_value)) param_value_size_ret: \(String(describing: param_value_size_ret)))")
+    }
+
+    let _program = program.toMetalProgram()
+
+    switch param_name {
+    case cl_program_build_info(CL_PROGRAM_BUILD_LOG):
+        param_value_size_ret?.pointee = 0
+
+    case cl_program_info(CL_PROGRAM_BUILD_STATUS):
+        param_value?.assumingMemoryBound(to: cl_build_status.self).pointee = cl_build_status(CL_BUILD_SUCCESS)
+        param_value_size_ret?.pointee = MemoryLayout <cl_build_status>.size
+
+    default:
+        preconditionFailure(String(format: "Unknown parameter: 0x%04x", param_name))
     }
 
     return CL_SUCCESS
@@ -109,7 +123,7 @@ public func clGetProgramInfo(program: cl_program,
                              param_value: UnsafeMutableRawPointer?,
                              param_value_size_ret: UnsafeMutablePointer <size_t>?) -> cl_int {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(program: \(program) param_name: \(param_name) param_value_size: \(param_value_size))")
+        print("\(#function)(program: \(program) param_name: \(param_name) param_value_size: \(param_value_size) param_value: \(String(describing: param_value)) param_value_size_ret: \(String(describing: param_value_size_ret)))")
     }
 
     let _program = program.toMetalProgram()
@@ -122,10 +136,10 @@ public func clGetProgramInfo(program: cl_program,
 
         if let _param_value = param_value,
            let _data = data {
-            precondition(_data.count == param_value_size)
-
             let _ = _data.withUnsafeBytes {
-                memcpy(_param_value, $0.baseAddress!, param_value_size)
+                memcpy(_param_value.assumingMemoryBound(to: UnsafeMutablePointer <UnsafeMutableRawPointer>.self).pointee,
+                       $0.baseAddress!,
+                       _data.count)
             }
         }
 
