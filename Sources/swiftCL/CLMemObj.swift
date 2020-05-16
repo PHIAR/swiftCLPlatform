@@ -75,6 +75,31 @@ public func clGetMemObjectInfo(_ memobj: cl_mem,
         print("\(#function)(memobj: \(memobj))")
     }
 
+    let _memObj = memobj.toMetalMemObj()
+
+    switch param_name {
+    case cl_mem_info(CL_MEM_TYPE):
+        param_value_size_ret?.pointee = MemoryLayout <cl_mem_object_type>.size
+
+        if let _ = _memObj as? MetalBuffer {
+            param_value?.assumingMemoryBound(to: cl_mem_object_type.self).pointee = cl_mem_object_type(CL_MEM_OBJECT_BUFFER)
+        } else {
+            param_value?.assumingMemoryBound(to: cl_mem_object_type.self).pointee = cl_mem_object_type(CL_MEM_OBJECT_IMAGE2D)
+        }
+
+    case cl_mem_info(CL_MEM_SIZE):
+        param_value_size_ret?.pointee = MemoryLayout <UInt64>.size
+
+        if let metalBuffer = _memObj as? MetalBuffer {
+            param_value?.assumingMemoryBound(to: UInt64.self).pointee = UInt64(metalBuffer.buffer.length)
+        } else {
+            preconditionFailure()
+        }
+
+    default:
+        preconditionFailure(String(format: "Unknown parameter: 0x%04x", param_name))
+    }
+
     return CL_SUCCESS
 }
 
