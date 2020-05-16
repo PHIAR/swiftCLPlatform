@@ -64,7 +64,9 @@ public func clGetDeviceIDs(_ platform: cl_platform_id?,
 @_cdecl("clGetExtensionFunctionAddress")
 public func clGetExtensionFunctionAddress(_ func_name: UnsafePointer <CChar>) -> UnsafeMutableRawPointer? {
     if SWIFTCL_ENABLE_CONSOLE_LOG {
-        print("\(#function)(func_name: \(func_name))")
+        let name = String(cString: func_name)
+
+        print("\(#function)(func_name: \(name))")
     }
 
     return nil
