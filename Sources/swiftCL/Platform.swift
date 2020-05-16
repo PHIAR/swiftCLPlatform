@@ -16,7 +16,7 @@ internal final class Platform: MetalPlatform {
     private static let vendor = "swiftCL"
 
     internal static let extensions = "cl_khr_byte_addressable_store " +
-                                     "cl_khr_create_command_queue" +
+                                     "cl_khr_create_command_queue " +
                                      "cl_khr_fp16 " +
                                      "cl_khr_il_program"
     internal static let version = "OpenCL 2.0"
