@@ -2,7 +2,9 @@
 #include <cstring>
 #include <dlfcn.h>
 #include <string>
+#include <clspv/ArgKind.h>
 #include <clspv/Compiler.h>
+#include <clspv/DescriptorMap.h>
 
 #include "clspv.h"
 
